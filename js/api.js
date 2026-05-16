@@ -24,16 +24,34 @@ async function fetchStudentData(studentId) {
     });
   }
 
-  try {
-    const url = `${CONFIG.APPS_SCRIPT_URL}?action=getStudent&id=${encodeURIComponent(studentId)}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.error("[EduTrack API] fetchStudentData failed:", err);
-    return { success: false, message: err.message };
-  }
+  // Uses JSONP to avoid CORS issues with Apps Script redirects
+  return new Promise((resolve) => {
+    const callbackName = "_edutrack_cb_" + Date.now();
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      resolve({ success: false, message: "Request timed out. Check your Apps Script URL." });
+    }, 12000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = function (data) {
+      cleanup();
+      resolve(data);
+    };
+
+    const url = `${CONFIG.APPS_SCRIPT_URL}?action=getStudent&id=${encodeURIComponent(studentId)}&callback=${callbackName}`;
+    script.src = url;
+    script.onerror = () => {
+      cleanup();
+      resolve({ success: false, message: "Could not reach the server. Check your Apps Script URL in config.js." });
+    };
+    document.head.appendChild(script);
+  });
 }
 
 /**
