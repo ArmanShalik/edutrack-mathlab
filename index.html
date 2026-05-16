@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduTrack Pro — Student Portal</title>
+  <meta name="description" content="Student progress portal — enter your NIC or Index Number to access your academic dashboard.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="login-page">
+
+  <!-- ── Animated Background ────────────────────────────── -->
+  <div class="bg-animation">
+    <canvas id="particleCanvas"></canvas>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- ── Login Card ─────────────────────────────────────── -->
+  <div class="login-wrapper">
+    <div class="login-card">
+
+      <div class="login-logo">
+        <div class="logo-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <h1 class="portal-title" id="portalTitle">EduTrack <span>Pro</span></h1>
+        <p class="portal-subtitle" id="portalSubtitle">Student Progress Portal</p>
+      </div>
+
+      <div class="login-form">
+        <div class="form-group">
+          <label for="studentId">NIC Number or Index Number</label>
+          <div class="input-wrapper">
+            <i class="fas fa-id-card input-icon"></i>
+            <input
+              type="text"
+              id="studentId"
+              placeholder="e.g. 200012345678 or 2024/AL/001"
+              autocomplete="off"
+              spellcheck="false"
+            >
+          </div>
+        </div>
+
+        <button class="btn-login" id="loginBtn">
+          <span>Access My Dashboard</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+
+        <div id="loginError" class="login-error hidden">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>Student not found. Please check your NIC or Index Number.</span>
+        </div>
+      </div>
+
+      <div class="login-footer">
+        <p>Need help? <a href="#" id="waLink"><i class="fab fa-whatsapp"></i> Contact Tutor</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Loading Overlay ────────────────────────────────── -->
+  <div class="loading-overlay hidden" id="loadingOverlay">
+    <div class="loader">
+      <div class="loader-ring"></div>
+      <p>Loading your profile…</p>
+    </div>
+  </div>
+
+  <!-- ── Scripts ────────────────────────────────────────── -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // ── Branding from config ──────────────────────────────
+    document.getElementById("portalTitle").innerHTML =
+      CONFIG.PORTAL_NAME.replace(" ", " <span>") + "</span>";
+
+    // ── WhatsApp ─────────────────────────────────────────
+    document.getElementById("waLink").href =
+      `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(CONFIG.WHATSAPP_MESSAGE)}`;
+    document.getElementById("waLink").target = "_blank";
+
+    // ── Login logic ───────────────────────────────────────
+    document.getElementById("loginBtn").addEventListener("click", handleLogin);
+    document.getElementById("studentId").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    function handleLogin() {
+      const raw = document.getElementById("studentId").value.trim();
+      if (!raw) {
+        document.getElementById("studentId").focus();
+        return;
+      }
+
+      document.getElementById("loginError").classList.add("hidden");
+      document.getElementById("loadingOverlay").classList.remove("hidden");
+      document.getElementById("loginBtn").disabled = true;
+
+      fetchStudentData(raw)
+        .then((data) => {
+          if (data && data.success) {
+            sessionStorage.setItem("studentData", JSON.stringify(data));
+            sessionStorage.setItem("studentId", raw);
+            window.location.href = "dashboard.html";
+          } else {
+            document.getElementById("loadingOverlay").classList.add("hidden");
+            document.getElementById("loginError").classList.remove("hidden");
+            document.getElementById("loginBtn").disabled = false;
+          }
+        })
+        .catch(() => {
+          document.getElementById("loadingOverlay").classList.add("hidden");
+          document.getElementById("loginError").classList.remove("hidden");
+          document.getElementById("loginBtn").disabled = false;
+        });
+    }
+
+    // ── Particle canvas ──────────────────────────────────
+    (function initParticles() {
+      const canvas = document.getElementById("particleCanvas");
+      const ctx    = canvas.getContext("2d");
+      let W, H, particles;
+
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function makeParticle() {
+        return {
+          x:     Math.random() * W,
+          y:     Math.random() * H,
+          r:     Math.random() * 1.4 + 0.3,
+          dx:    (Math.random() - 0.5) * 0.3,
+          dy:    -Math.random() * 0.5 - 0.15,
+          alpha: Math.random() * 0.5 + 0.1,
+          gold:  Math.random() > 0.65,
+        };
+      }
+
+      function init() {
+        resize();
+        particles = Array.from({ length: 140 }, makeParticle);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach((p) => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.gold
+            ? `rgba(201,168,76,${p.alpha})`
+            : `rgba(180,210,255,${p.alpha * 0.6})`;
+          ctx.fill();
+
+          p.x += p.dx;
+          p.y += p.dy;
+          if (p.y < -5) { Object.assign(p, makeParticle(), { y: H + 5 }); }
+          if (p.x < -5 || p.x > W + 5) { Object.assign(p, makeParticle(), { x: Math.random() * W }); }
+        });
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener("resize", resize);
+      init();
+      draw();
+    })();
+  </script>
+</body>
+</html>

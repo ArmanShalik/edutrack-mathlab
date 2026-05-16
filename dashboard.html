@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — EduTrack Pro</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- ── Animated Background ────────────────────────────── -->
+  <div class="bg-animation">
+    <canvas id="particleCanvas"></canvas>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Mobile nav overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <div class="dashboard-layout">
+
+    <!-- ═══════════════════════════════════════════════════
+         TOPBAR
+         ═══════════════════════════════════════════════════ -->
+    <header class="topbar">
+      <button class="hamburger btn-icon" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <div class="topbar-brand">
+        <i class="fas fa-graduation-cap"></i>
+        <span id="topbarBrand">EduTrack Pro</span>
+      </div>
+
+      <div class="topbar-student">
+        <div class="student-avatar" id="avatarInitials">AP</div>
+        <div class="student-info">
+          <div class="student-name" id="studentName">Loading…</div>
+          <div class="student-meta">
+            <span id="studentIndex">—</span> &nbsp;·&nbsp;
+            <span id="studentNIC">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn-icon" id="waTopBtn" title="WhatsApp Tutor" onclick="openWhatsApp()">
+          <i class="fab fa-whatsapp" style="color:#25D366"></i>
+        </button>
+        <button class="btn-icon" title="Logout" onclick="doLogout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════
+         SIDEBAR
+         ═══════════════════════════════════════════════════ -->
+    <nav class="sidebar" id="sidebar">
+      <span class="nav-section-label">Dashboard</span>
+      <a class="nav-link active" href="#overview" onclick="closeOnMobile()">
+        <i class="fas fa-home"></i> Overview
+      </a>
+      <a class="nav-link" href="#exams" onclick="closeOnMobile()">
+        <i class="fas fa-file-alt"></i> Exams
+      </a>
+
+      <span class="nav-section-label">Academic</span>
+      <a class="nav-link" href="#attendance" onclick="closeOnMobile()">
+        <i class="fas fa-calendar-check"></i> Attendance
+      </a>
+      <a class="nav-link" href="#classes" onclick="closeOnMobile()">
+        <i class="fas fa-chalkboard"></i> Classes
+      </a>
+
+      <span class="nav-section-label">Reports</span>
+      <a class="nav-link" href="#downloads" onclick="closeOnMobile()">
+        <i class="fas fa-download"></i> Download Reports
+      </a>
+
+      <div class="sidebar-spacer"></div>
+
+      <a class="nav-link nav-whatsapp" href="#" onclick="openWhatsApp(); return false;">
+        <i class="fab fa-whatsapp"></i> Contact Tutor
+      </a>
+      <a class="nav-link" href="#" onclick="doLogout(); return false;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════
+         MAIN CONTENT
+         ═══════════════════════════════════════════════════ -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ── SECTION: Overview ──────────────────────────── -->
+      <section class="page-section" id="overview">
+        <div class="section-title">
+          <div class="section-title-icon"><i class="fas fa-home"></i></div>
+          <div>
+            <h2>Overview</h2>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-top:2px" id="studentClass">—</p>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-strip">
+          <div class="kpi-card" id="kpiAvg">
+            <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Average Score</div>
+          </div>
+          <div class="kpi-card" id="kpiLatest">
+            <div class="kpi-icon"><i class="fas fa-star"></i></div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Latest Exam</div>
+          </div>
+          <div class="kpi-card" id="kpiAttendance">
+            <div class="kpi-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Attendance</div>
+          </div>
+          <div class="kpi-card" id="kpiGrade">
+            <div class="kpi-icon"><i class="fas fa-medal"></i></div>
+            <div class="kpi-value">—</div>
+            <div class="kpi-label">Latest Grade</div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="charts-row" style="margin-top:24px">
+          <div class="chart-card">
+            <div class="chart-card-title">
+              <i class="fas fa-chart-line"></i> Score Progression
+            </div>
+            <div class="chart-wrap" style="height:280px">
+              <canvas id="progressChart"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">
+              <i class="fas fa-spider"></i> Topic Performance
+            </div>
+            <div class="chart-wrap" style="height:280px">
+              <canvas id="radarChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: Exams ─────────────────────────────── -->
+      <section class="page-section" id="exams">
+        <div class="section-title">
+          <div class="section-title-icon"><i class="fas fa-file-alt"></i></div>
+          <h2>Exam Results</h2>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <span class="filter-label"><i class="fas fa-filter"></i> Filter:</span>
+          <div id="examTypeFilters" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+
+        <!-- Exam cards injected here -->
+        <div id="examCardsContainer"></div>
+      </section>
+
+      <!-- ── SECTION: Attendance ────────────────────────── -->
+      <section class="page-section" id="attendance">
+        <div class="section-title">
+          <div class="section-title-icon"><i class="fas fa-calendar-check"></i></div>
+          <h2>Attendance</h2>
+        </div>
+
+        <!-- Summary stats -->
+        <div class="att-stats-row">
+          <div class="att-stat-card">
+            <div class="att-stat-value" id="attTotal">—</div>
+            <div class="att-stat-label">Total Classes</div>
+          </div>
+          <div class="att-stat-card">
+            <div class="att-stat-value" id="attPresent" style="color:var(--green)">—</div>
+            <div class="att-stat-label">Attended</div>
+          </div>
+          <div class="att-stat-card">
+            <div class="att-stat-value" id="attMissed" style="color:var(--red)">—</div>
+            <div class="att-stat-label">Missed</div>
+          </div>
+          <div class="att-stat-card">
+            <div class="att-stat-value" id="attPct">—</div>
+            <div class="att-stat-label">Attendance %</div>
+          </div>
+        </div>
+
+        <!-- Impact banner -->
+        <div id="impactBanner" class="impact-banner impact-medium">
+          <div class="impact-icon"><i class="fas fa-info-circle"></i></div>
+          <div class="impact-text">
+            <strong>Loading impact analysis…</strong>
+            <p>Please wait.</p>
+          </div>
+        </div>
+
+        <!-- Calendar + Donut layout -->
+        <div class="attendance-layout">
+          <div>
+            <div class="section-heading" style="margin-bottom:16px">
+              <i class="fas fa-calendar-alt"></i> Attendance Calendar
+            </div>
+            <div id="attendanceCalendar" class="attendance-calendar"></div>
+          </div>
+          <div>
+            <div class="section-heading" style="margin-bottom:16px">
+              <i class="fas fa-chart-pie"></i> Breakdown
+            </div>
+            <div style="height:220px">
+              <canvas id="attendanceDonut"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: Classes ───────────────────────────── -->
+      <section class="page-section" id="classes">
+        <div class="section-title">
+          <div class="section-title-icon"><i class="fas fa-chalkboard"></i></div>
+          <h2>Class Schedule</h2>
+        </div>
+
+        <div class="classes-grid">
+          <div class="class-card">
+            <div id="lastWeekBlock">
+              <div style="color:var(--text-muted);font-size:0.85rem">Loading last week…</div>
+            </div>
+          </div>
+          <div class="class-card" style="border-color:var(--border-gold)">
+            <div id="upcomingBlock">
+              <div style="color:var(--text-muted);font-size:0.85rem">Loading upcoming…</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: Downloads ─────────────────────────── -->
+      <section class="page-section" id="downloads">
+        <div class="section-title">
+          <div class="section-title-icon"><i class="fas fa-download"></i></div>
+          <h2>Download Reports</h2>
+        </div>
+
+        <div class="download-grid">
+          <div class="download-card" data-download="latest">
+            <div class="dl-icon"><i class="fas fa-file-invoice"></i></div>
+            <h4>Latest Exam Review</h4>
+            <p>PDF report of your most recent exam including question breakdown and tutor feedback.</p>
+          </div>
+          <div class="download-card" data-download="filtered">
+            <div class="dl-icon"><i class="fas fa-filter"></i></div>
+            <h4>Current Filter View</h4>
+            <p>Export the exams currently shown in your filter selection.</p>
+          </div>
+          <div class="download-card" data-download="full">
+            <div class="dl-icon"><i class="fas fa-book"></i></div>
+            <h4>Full Progress Report</h4>
+            <p>Complete report — all exams, tutor reviews, attendance log, and class schedules.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ── WhatsApp FAB ────────────────────────────────────── -->
+  <button class="whatsapp-fab" onclick="openWhatsApp()" title="Chat with Tutor on WhatsApp" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </button>
+
+  <!-- ═══════════════════════════════════════════════════════
+       External Libraries
+       ═══════════════════════════════════════════════════════ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- ── App Scripts (order matters) ──────────────────────── -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/exams.js"></script>
+  <script src="js/attendance.js"></script>
+  <script src="js/download.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- ── Inline bootstrap helpers ─────────────────────────── -->
+  <script>
+    // ── Branding ──────────────────────────────────────────
+    document.title = `Dashboard — ${CONFIG.PORTAL_NAME}`;
+    document.getElementById("topbarBrand").textContent = CONFIG.PORTAL_NAME;
+
+    // ── Sidebar toggle (mobile) ───────────────────────────
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+      document.getElementById("sidebarOverlay").classList.toggle("visible");
+    }
+    function closeSidebar() {
+      document.getElementById("sidebar").classList.remove("open");
+      document.getElementById("sidebarOverlay").classList.remove("visible");
+    }
+    function closeOnMobile() {
+      if (window.innerWidth <= 1024) closeSidebar();
+    }
+
+    // ── Particle canvas ──────────────────────────────────
+    (function initParticles() {
+      const canvas = document.getElementById("particleCanvas");
+      const ctx    = canvas.getContext("2d");
+      let W, H, particles;
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+      function mkp() { return { x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.2+0.2, dx: (Math.random()-0.5)*0.25, dy: -Math.random()*0.35-0.1, alpha: Math.random()*0.4+0.1, gold: Math.random()>0.6 }; }
+      function init() { resize(); particles = Array.from({length:120}, mkp); }
+      function draw() {
+        ctx.clearRect(0,0,W,H);
+        particles.forEach(p => {
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fillStyle = p.gold ? `rgba(201,168,76,${p.alpha})` : `rgba(160,200,255,${p.alpha*0.5})`;
+          ctx.fill();
+          p.x+=p.dx; p.y+=p.dy;
+          if(p.y<-4) Object.assign(p, mkp(), {y:H+4});
+          if(p.x<-4||p.x>W+4) Object.assign(p, mkp(), {x: Math.random()*W});
+        });
+        requestAnimationFrame(draw);
+      }
+      window.addEventListener("resize", resize);
+      init(); draw();
+    })();
+  </script>
+</body>
+</html>

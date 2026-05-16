@@ -1,0 +1,223 @@
+/* ═══════════════════════════════════════════════════════════
+   EduTrack Pro — Animations & Background
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Animated Background ────────────────────────────────────── */
+.bg-animation {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Deep starfield gradient */
+.bg-animation::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%, rgba(26, 58, 108, 0.45) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 80%, rgba(10, 22, 40, 0.60) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 100% at 50% 50%, rgba(5, 13, 26, 1) 0%, #020810 100%);
+  z-index: 0;
+}
+
+/* Animated orbs */
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: orb-float 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+.orb-1 {
+  width: clamp(280px, 40vw, 520px);
+  height: clamp(280px, 40vw, 520px);
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.12) 0%, rgba(201, 168, 76, 0.04) 50%, transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation-duration: 22s;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: clamp(300px, 45vw, 600px);
+  height: clamp(300px, 45vw, 600px);
+  background: radial-gradient(circle, rgba(26, 74, 128, 0.25) 0%, rgba(10, 40, 90, 0.12) 50%, transparent 70%);
+  bottom: -15%;
+  right: -10%;
+  animation-duration: 26s;
+  animation-delay: -8s;
+}
+
+.orb-3 {
+  width: clamp(200px, 28vw, 380px);
+  height: clamp(200px, 28vw, 380px);
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  animation-duration: 30s;
+  animation-delay: -14s;
+}
+
+/* Grid overlay */
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201, 168, 76, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 168, 76, 0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+}
+
+/* Canvas particles */
+#particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── Keyframes ──────────────────────────────────────────────── */
+@keyframes orb-float {
+  0%   { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(5%, 3%) scale(1.06); }
+  50%  { transform: translate(2%, 7%) scale(0.96); }
+  75%  { transform: translate(-4%, 2%) scale(1.04); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+  50%       { box-shadow: 0 0 0 12px rgba(37,211,102,0); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
+  50%       { box-shadow: 0 0 0 10px rgba(201,168,76,0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float-star {
+  0%   { transform: translateY(0) scale(1); opacity: 0.7; }
+  50%  { transform: translateY(-20px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 0.7; }
+}
+
+/* ── Entrance Animations ────────────────────────────────────── */
+.login-card  { animation: fadeInUp 0.6s ease both; }
+.kpi-card    { animation: fadeInUp 0.5s ease both; }
+.exam-card   { animation: fadeInUp 0.4s ease both; }
+.chart-card  { animation: fadeIn 0.5s ease both; }
+
+.kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.kpi-card:nth-child(2) { animation-delay: 0.10s; }
+.kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.kpi-card:nth-child(4) { animation-delay: 0.20s; }
+
+/* ── Skeleton Loading ──────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--navy-600) 25%,
+    var(--navy-500) 50%,
+    var(--navy-600) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Particle Canvas (JS-driven, CSS sets base) ─────────────── */
+canvas#particleCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+/* ── Scan-line decoration (subtle depth) ────────────────────── */
+.bg-animation::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Nav sidebar slide overlay ──────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: 64px;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 140;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.visible { display: block; }
+
+/* ── Gold shimmer on KPI value ─────────────────────────────── */
+.kpi-value {
+  background: linear-gradient(
+    90deg,
+    var(--gold-500) 0%,
+    var(--gold-300) 40%,
+    var(--gold-500) 60%,
+    var(--gold-300) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ── Section reveal on scroll ──────────────────────────────── */
+.page-section {
+  animation: fadeInUp 0.5s ease both;
+}
+
+/* ── Card hover glow line ───────────────────────────────────── */
+.exam-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.exam-card:hover::before { opacity: 1; }
+.exam-card { position: relative; }
