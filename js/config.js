@@ -7,7 +7,7 @@
 const CONFIG = {
   // ── Google Apps Script Web App URL ──────────────────────
   // After deploying your Apps Script, paste the URL here.
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyWD8R05HRgLM711CvlMPqAMP2PyvYYFlNPtL_MZNoMsi_ht1EOC5xz0AgwXRev24Dv2A/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbys3onBe0QHkU8M7uIBMd2fQm_slwKh6j62vzkpWX0_EpKlGrbW5SIjjI-ELSlqtB366A/exec",
 
   // ── WhatsApp ─────────────────────────────────────────────
   // Include country code without '+' or '00' (e.g. Sri Lanka: 94771234567)
